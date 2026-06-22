@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Udupi Café — Pure Vegetarian | ITO, Delhi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --maroon: #6B1E1E;
+    --maroon-light: #8B2E2E;
+    --cream: #F5EDD8;
+    --cream-dark: #E8D9BA;
+    --gold: #C9933A;
+    --gold-light: #E4B86A;
+    --charcoal: #1A1209;
+    --warm-black: #0F0C07;
+    --leaf: #2D5A1B;
+    --text-muted: rgba(245,237,216,0.5);
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: auto; }
+
+  body {
+    background: var(--warm-black);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s, background 0.3s;
+    mix-blend-mode: difference;
+  }
+  .cursor-follower {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(201,147,58,0.5);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.12s ease-out, width 0.3s, height 0.3s;
+  }
+  body:hover .cursor-follower { opacity: 1; }
+
+  /* LOADER */
+  #loader {
+    position: fixed; inset: 0;
+    background: var(--warm-black);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .loader-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-style: italic;
+    color: var(--cream);
+    letter-spacing: 0.02em;
+    opacity: 0;
+  }
+  .loader-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0;
+  }
+  .loader-bar-wrap {
+    width: 200px; height: 1px;
+    background: rgba(201,147,58,0.2);
+    overflow: hidden;
+  }
+  .loader-bar {
+    height: 100%;
+    background: var(--gold);
+    width: 0%;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 5vw;
+    background: linear-gradient(to bottom, rgba(10,8,3,0.9) 0%, transparent 100%);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.4rem;
+    color: var(--cream);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+  .nav-links {
+    display: flex; gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 1px; background: var(--gold);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+  }
+  .nav-links a:hover { color: var(--cream); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-reserve {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--warm-black);
+    background: var(--gold);
+    padding: 10px 22px;
+    text-decoration: none;
+    transition: background 0.3s;
+  }
+  .nav-reserve:hover { background: var(--gold-light); }
+
+  /* HERO */
+  #hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  #canvas3d {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+
+  .hero-content {
+    position: relative; z-index: 10;
+    text-align: center;
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 24px;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 9vw, 9rem);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--cream);
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    font-weight: 300;
+    color: var(--text-muted);
+    margin-top: 24px;
+    letter-spacing: 0.05em;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .hero-scroll {
+    position: absolute;
+    bottom: 40px; left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    z-index: 10;
+  }
+  .hero-scroll span {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .scroll-line {
+    width: 1px; height: 60px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollLine 2s ease infinite;
+  }
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    51% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  /* DECORATIVE BORDER — from the cafe's own pattern */
+  .border-motif {
+    width: 100%;
+    height: 28px;
+    background: var(--maroon);
+    position: relative;
+    overflow: hidden;
+  }
+  .border-motif::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(
+      90deg,
+      transparent 0px, transparent 20px,
+      var(--maroon-light) 20px, var(--maroon-light) 21px
+    );
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='28'%3E%3Cpath d='M0,0 L20,20 L40,0' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E");
+    mask-size: 40px 28px;
+    mask-repeat: repeat-x;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='28'%3E%3Cpath d='M0,0 L20,20 L40,0' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E");
+    -webkit-mask-size: 40px 28px;
+    -webkit-mask-repeat: repeat-x;
+  }
+
+  /* REVEAL WRAPPER */
+  .reveal { opacity: 0; transform: translateY(50px); }
+
+  /* STORY SECTION */
+  #story {
+    padding: 120px 5vw;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .story-text .eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: block;
+  }
+  .story-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    line-height: 1.15;
+    margin-bottom: 28px;
+  }
+  .story-text h2 em { font-style: italic; color: var(--gold); }
+  .story-text p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: rgba(245,237,216,0.75);
+    margin-bottom: 16px;
+  }
+  .story-img-wrap {
+    position: relative;
+  }
+  .story-img-wrap img {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+    display: block;
+  }
+  .story-img-wrap::before {
+    content: '';
+    position: absolute;
+    top: -16px; left: -16px;
+    right: 16px; bottom: 16px;
+    border: 1px solid rgba(201,147,58,0.3);
+    z-index: -1;
+  }
+
+  /* CUISINE SECTION */
+  #cuisine {
+    padding: 100px 5vw;
+    background: var(--maroon);
+    position: relative;
+    overflow: hidden;
+  }
+  #cuisine::before {
+    content: '';
+    position: absolute;
+    top: -1px; bottom: -1px; left: 0; right: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent, transparent 40px,
+      rgba(0,0,0,0.04) 40px, rgba(0,0,0,0.04) 41px
+    );
+  }
+  .cuisine-header {
+    text-align: center;
+    margin-bottom: 70px;
+  }
+  .cuisine-header .eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-bottom: 16px;
+    display: block;
+  }
+  .cuisine-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-style: italic;
+    line-height: 1.1;
+  }
+  .cuisine-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.1);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .cuisine-card {
+    background: var(--maroon);
+    padding: 48px 32px;
+    text-align: center;
+    transition: background 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+  .cuisine-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+  }
+  .cuisine-card:hover { background: var(--maroon-light); }
+  .cuisine-card:hover::after { transform: scaleX(1); }
+  .cuisine-icon {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .cuisine-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+  .cuisine-card p {
+    font-size: 0.8rem;
+    color: rgba(245,237,216,0.6);
+    line-height: 1.6;
+    letter-spacing: 0.03em;
+  }
+
+  /* MENU SECTION */
+  #menu {
+    padding: 120px 5vw;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 60px;
+  }
+  .menu-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-style: italic;
+  }
+  .menu-header h2 em { color: var(--gold); font-style: normal; }
+  .menu-tabs {
+    display: flex; gap: 2px;
+  }
+  .tab-btn {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    border: none;
+    background: rgba(245,237,216,0.08);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .tab-btn.active {
+    background: var(--gold);
+    color: var(--warm-black);
+  }
+  .menu-panel { display: none; }
+  .menu-panel.active { display: block; }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(245,237,216,0.08);
+    gap: 20px;
+  }
+  .menu-item-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    color: var(--cream);
+  }
+  .menu-item-dots {
+    flex: 1;
+    height: 1px;
+    background: repeating-linear-gradient(
+      90deg, rgba(201,147,58,0.3) 0, rgba(201,147,58,0.3) 4px,
+      transparent 4px, transparent 10px
+    );
+    margin: 0 12px;
+    align-self: center;
+  }
+  .menu-item-price {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+  .menu-col { padding: 0 20px; }
+  .menu-col:first-child { padding-left: 0; border-right: 1px solid rgba(245,237,216,0.06); padding-right: 40px; }
+
+  /* ATMOSPHERE SECTION */
+  #atmosphere {
+    padding: 0;
+    position: relative;
+  }
+  .atmo-strip {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    height: 70vh;
+    gap: 4px;
+  }
+  .atmo-img {
+    overflow: hidden;
+    position: relative;
+  }
+  .atmo-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+    filter: brightness(0.75) saturate(0.9);
+  }
+  .atmo-img:hover img { transform: scale(1.05); filter: brightness(0.9) saturate(1.1); }
+  .atmo-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(10,8,3,0.6) 0%, transparent 50%);
+  }
+  .atmo-label {
+    position: absolute;
+    bottom: 24px; left: 24px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--cream);
+    letter-spacing: 0.05em;
+  }
+
+  /* VISIT / CONTACT */
+  #visit {
+    padding: 120px 5vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  .visit-info .eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: block;
+  }
+  .visit-info h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-style: italic;
+    margin-bottom: 40px;
+  }
+  .info-block { margin-bottom: 32px; }
+  .info-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .info-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--cream);
+    line-height: 1.6;
+  }
+  .info-value a { color: var(--gold-light); text-decoration: none; }
+  .map-embed {
+    width: 100%;
+    height: 400px;
+    border: none;
+    filter: grayscale(30%) sepia(10%);
+  }
+
+  /* CTA BAND */
+  #cta-band {
+    background: var(--cream);
+    padding: 80px 5vw;
+    text-align: center;
+  }
+  #cta-band .eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--maroon);
+    margin-bottom: 16px;
+    display: block;
+  }
+  #cta-band h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    color: var(--charcoal);
+    font-style: italic;
+    margin-bottom: 32px;
+  }
+  .cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 16px 36px;
+    background: var(--maroon);
+    color: var(--cream);
+    text-decoration: none;
+    transition: background 0.3s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-primary:hover { background: var(--maroon-light); }
+  .btn-outline {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 16px 36px;
+    border: 1px solid var(--maroon);
+    color: var(--maroon);
+    text-decoration: none;
+    transition: all 0.3s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-outline:hover { background: var(--maroon); color: var(--cream); }
+
+  /* FOOTER */
+  footer {
+    background: var(--warm-black);
+    padding: 48px 5vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(245,237,216,0.06);
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--cream);
+  }
+  .footer-copy {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+
+  /* NOISE OVERLAY */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9997;
+    opacity: 0.4;
+  }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    #story, #visit { grid-template-columns: 1fr; gap: 40px; }
+    .cuisine-grid { grid-template-columns: repeat(2, 1fr); }
+    .menu-grid { grid-template-columns: 1fr; }
+    .menu-col:first-child { border-right: none; padding-right: 0; border-bottom: 1px solid rgba(245,237,216,0.08); padding-bottom: 20px; margin-bottom: 20px; }
+    .menu-header { flex-direction: column; gap: 20px; align-items: flex-start; }
+    .atmo-strip { grid-template-columns: 1fr; height: auto; }
+    .atmo-img { height: 250px; }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-follower" id="cursorFollower"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">Udupi Café</div>
+  <div class="loader-bar-wrap"><div class="loader-bar" id="loaderBar"></div></div>
+  <div class="loader-sub">Pure Vegetarian · ITO, Delhi</div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Udupi Café</a>
+  <ul class="nav-links">
+    <li><a href="#story">Our Story</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#atmosphere">Gallery</a></li>
+    <li><a href="#visit">Visit Us</a></li>
+  </ul>
+  <a href="tel:+917042311773" class="nav-reserve">Reserve a Table</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="canvas3d"></canvas>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Est. ITO, New Delhi</p>
+    <h1 class="hero-title">South<br><em>Indian</em><br>Soul</h1>
+    <p class="hero-subtitle">Pure Vegetarian · Authentic Flavours · Delhi's Finest</p>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<div class="border-motif"></div>
+
+<!-- STORY -->
+<section id="story">
+  <div class="story-text reveal">
+    <span class="eyebrow">Our Heritage</span>
+    <h2>Where Every<br>Dish Tells a<br><em>Story</em></h2>
+    <p>Nestled in the heart of ITO, Udupi Café brings the warmth and tradition of South Indian vegetarian cooking to Delhi's table. Every dish is prepared with the precision of generations and the love of home.</p>
+    <p>From our crisp Dosas to the soul-warming Sambar, from the tangy Bissi Bale Bath to the cooling Curd Rice — we honour the classics while crafting experiences that linger long after the last bite.</p>
+  </div>
+  <div class="story-img-wrap reveal">
+    <img src="interior1.png" alt="Udupi Cafe Interior" loading="lazy">
+  </div>
+</section>
+
+<!-- CUISINE CARDS -->
+<section id="cuisine">
+  <div class="cuisine-header reveal">
+    <span class="eyebrow">What We Serve</span>
+    <h2>A Feast for Every<br>Taste & Season</h2>
+  </div>
+  <div class="cuisine-grid">
+    <div class="cuisine-card reveal">
+      <span class="cuisine-icon">🌾</span>
+      <h3>South Indian Classics</h3>
+      <p>Dosas, Idlis, Vadas, Uthappams — the soul of Udupi on every plate</p>
+    </div>
+    <div class="cuisine-card reveal">
+      <span class="cuisine-icon">🍛</span>
+      <h3>Rice Delicacies</h3>
+      <p>Sambar Rice, Tamarind Rice, Bissi Bale Bath, Curd Rice with Papad</p>
+    </div>
+    <div class="cuisine-card reveal">
+      <span class="cuisine-icon">🥘</span>
+      <h3>North Indian Flavours</h3>
+      <p>Paneer curries, Hakka Noodles, Fried Rice — comfort in every bowl</p>
+    </div>
+    <div class="cuisine-card reveal">
+      <span class="cuisine-icon">🍮</span>
+      <h3>Traditional Desserts</h3>
+      <p>Kesar Bath, Payasam, Gulab Jamun — a sweet ending to a perfect meal</p>
+    </div>
+  </div>
+</section>
+
+<div class="border-motif"></div>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="menu-header reveal">
+    <h2>Our <em>Menu</em></h2>
+    <div class="menu-tabs">
+      <button class="tab-btn active" data-tab="dosa">Dosas</button>
+      <button class="tab-btn" data-tab="snacks">Light Eats</button>
+      <button class="tab-btn" data-tab="chinese">Chinese</button>
+      <button class="tab-btn" data-tab="dessert">Sweets</button>
+    </div>
+  </div>
+
+  <div class="menu-panel active" id="tab-dosa">
+    <div class="menu-grid">
+      <div class="menu-col">
+        <div class="menu-item"><span class="menu-item-name">Udupi Masala Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹165</span></div>
+        <div class="menu-item"><span class="menu-item-name">Udupi Plain Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹145</span></div>
+        <div class="menu-item"><span class="menu-item-name">Mysore Masala Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹175</span></div>
+        <div class="menu-item"><span class="menu-item-name">Ghee Masala Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹190</span></div>
+        <div class="menu-item"><span class="menu-item-name">Butter Masala Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹190</span></div>
+        <div class="menu-item"><span class="menu-item-name">Devanageri Benne Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹250</span></div>
+        <div class="menu-item"><span class="menu-item-name">Paneer Masala Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹220</span></div>
+        <div class="menu-item"><span class="menu-item-name">Onion Masala Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹175</span></div>
+      </div>
+      <div class="menu-col">
+        <div class="menu-item"><span class="menu-item-name">Udupi Rava Masala Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹190</span></div>
+        <div class="menu-item"><span class="menu-item-name">Onion Rava Masala Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹195</span></div>
+        <div class="menu-item"><span class="menu-item-name">Onion Rava Paneer Masala Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹245</span></div>
+        <div class="menu-item"><span class="menu-item-name">Mahaveer Rava Masala Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹230</span></div>
+        <div class="menu-item"><span class="menu-item-name">Mysore Rava Butter Masala Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹230</span></div>
+        <div class="menu-item"><span class="menu-item-name">Coconut Rava Masala Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹210</span></div>
+        <div class="menu-item"><span class="menu-item-name">Maharaja Sajje Masala Dosa</span><span class="menu-item-dots"></span><span class="menu-item-price">₹245</span></div>
+        <div class="menu-item"><span class="menu-item-name">Set Dosa (5 White Butter)</span><span class="menu-item-dots"></span><span class="menu-item-price">₹160</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-panel" id="tab-snacks">
+    <div class="menu-grid">
+      <div class="menu-col">
+        <div class="menu-item"><span class="menu-item-name">Rasam Papad</span><span class="menu-item-dots"></span><span class="menu-item-price">₹65</span></div>
+        <div class="menu-item"><span class="menu-item-name">Steamed Idli (2 Piece)</span><span class="menu-item-dots"></span><span class="menu-item-price">₹100</span></div>
+        <div class="menu-item"><span class="menu-item-name">Fried Idli (1 Plate)</span><span class="menu-item-dots"></span><span class="menu-item-price">₹110</span></div>
+        <div class="menu-item"><span class="menu-item-name">Medu Vada (3 Pieces)</span><span class="menu-item-dots"></span><span class="menu-item-price">₹125</span></div>
+        <div class="menu-item"><span class="menu-item-name">Rasam Vada (2 Pieces)</span><span class="menu-item-dots"></span><span class="menu-item-price">₹135</span></div>
+        <div class="menu-item"><span class="menu-item-name">Rava Upma</span><span class="menu-item-dots"></span><span class="menu-item-price">₹125</span></div>
+      </div>
+      <div class="menu-col">
+        <div class="menu-item"><span class="menu-item-name">Lemon Rice with Papad</span><span class="menu-item-dots"></span><span class="menu-item-price">₹145</span></div>
+        <div class="menu-item"><span class="menu-item-name">Sambar Rice with Papad</span><span class="menu-item-dots"></span><span class="menu-item-price">₹145</span></div>
+        <div class="menu-item"><span class="menu-item-name">Tamarind Rice with Papad</span><span class="menu-item-dots"></span><span class="menu-item-price">₹175</span></div>
+        <div class="menu-item"><span class="menu-item-name">Bissi Bale Bath with Papad</span><span class="menu-item-dots"></span><span class="menu-item-price">₹185</span></div>
+        <div class="menu-item"><span class="menu-item-name">Curd Rice with Papad</span><span class="menu-item-dots"></span><span class="menu-item-price">₹175</span></div>
+        <div class="menu-item"><span class="menu-item-name">Udupi Regular Thali</span><span class="menu-item-dots"></span><span class="menu-item-price">₹275</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-panel" id="tab-chinese">
+    <div class="menu-grid">
+      <div class="menu-col">
+        <div class="menu-item"><span class="menu-item-name">Chilly Paneer Dry</span><span class="menu-item-dots"></span><span class="menu-item-price">₹215</span></div>
+        <div class="menu-item"><span class="menu-item-name">Schezwan Chilly Paneer</span><span class="menu-item-dots"></span><span class="menu-item-price">₹225</span></div>
+        <div class="menu-item"><span class="menu-item-name">Vegetable Manchurian Dry</span><span class="menu-item-dots"></span><span class="menu-item-price">₹180</span></div>
+        <div class="menu-item"><span class="menu-item-name">Classic Chilly Potato</span><span class="menu-item-dots"></span><span class="menu-item-price">₹185</span></div>
+        <div class="menu-item"><span class="menu-item-name">Vegetable Spring Roll</span><span class="menu-item-dots"></span><span class="menu-item-price">₹185</span></div>
+      </div>
+      <div class="menu-col">
+        <div class="menu-item"><span class="menu-item-name">Butter Chilly Garlic Noodles</span><span class="menu-item-dots"></span><span class="menu-item-price">₹155</span></div>
+        <div class="menu-item"><span class="menu-item-name">Vegetable Hakka Noodles</span><span class="menu-item-dots"></span><span class="menu-item-price">₹185</span></div>
+        <div class="menu-item"><span class="menu-item-name">Vegetable Fried Rice</span><span class="menu-item-dots"></span><span class="menu-item-price">₹160</span></div>
+        <div class="menu-item"><span class="menu-item-name">Schezwan Fried Rice</span><span class="menu-item-dots"></span><span class="menu-item-price">₹175</span></div>
+        <div class="menu-item"><span class="menu-item-name">Paneer Masala Fried Rice</span><span class="menu-item-dots"></span><span class="menu-item-price">₹195</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-panel" id="tab-dessert">
+    <div class="menu-grid">
+      <div class="menu-col">
+        <div class="menu-item"><span class="menu-item-name">Kesar Bath</span><span class="menu-item-dots"></span><span class="menu-item-price">₹110</span></div>
+        <div class="menu-item"><span class="menu-item-name">Payasam</span><span class="menu-item-dots"></span><span class="menu-item-price">₹100</span></div>
+        <div class="menu-item"><span class="menu-item-name">Gulab Jamun</span><span class="menu-item-dots"></span><span class="menu-item-price">₹85</span></div>
+      </div>
+      <div class="menu-col">
+        <div class="menu-item"><span class="menu-item-name">South Indian Filter Coffee</span><span class="menu-item-dots"></span><span class="menu-item-price">₹60</span></div>
+        <div class="menu-item"><span class="menu-item-name">Tea</span><span class="menu-item-dots"></span><span class="menu-item-price">₹55</span></div>
+        <div class="menu-item"><span class="menu-item-name">Chow Chow Bath (1 Plate)</span><span class="menu-item-dots"></span><span class="menu-item-price">₹155</span></div>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size:0.7rem; color:var(--text-muted); margin-top:32px; letter-spacing:0.1em;">* All prices inclusive of taxes</p>
+</section>
+
+<!-- ATMOSPHERE -->
+<section id="atmosphere">
+  <div class="atmo-strip">
+    <div class="atmo-img">
+      <img src="interior1.png" alt="Udupi Cafe Decor">
+      <div class="atmo-overlay"></div>
+      <span class="atmo-label">The Ambience</span>
+    </div>
+    <div class="atmo-img">
+      <img src="interior2.png" alt="Udupi Cafe Dining Hall">
+      <div class="atmo-overlay"></div>
+      <span class="atmo-label">Our Dining Hall</span>
+    </div>
+    <div class="atmo-img">
+      <img src="interior3.png" alt="Udupi Cafe Seating">
+      <div class="atmo-overlay"></div>
+      <span class="atmo-label">A Place to Gather</span>
+    </div>
+  </div>
+</section>
+
+<div class="border-motif" style="background: var(--maroon);"></div>
+
+<!-- VISIT -->
+<section id="visit">
+  <div class="visit-info reveal">
+    <span class="eyebrow">Find Us</span>
+    <h2>Come Dine<br>With Us</h2>
+    <div class="info-block">
+      <span class="info-label">Address</span>
+      <p class="info-value">Udupi Café, ITO<br>New Delhi – 110002</p>
+    </div>
+    <div class="info-block">
+      <span class="info-label">Hours</span>
+      <p class="info-value">South Indian · 12:45 AM – 11:00 PM<br>Chinese · 11:00 AM – 11:00 PM</p>
+    </div>
+    <div class="info-block">
+      <span class="info-label">Reservations & Catering</span>
+      <p class="info-value">
+        <a href="tel:+917042311773">+91 70423 11773</a><br>
+        <a href="tel:+91110049091250">011 – 4909 1250</a>
+      </p>
+    </div>
+    <div class="info-block">
+      <span class="info-label">Order Online</span>
+      <p class="info-value">Available on Swiggy & Zomato</p>
+    </div>
+  </div>
+  <div class="reveal">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1750.976862043108!2d77.2414294!3d28.631149!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfcd0d0c069dd%3A0x1ba91f87ba9dd617!2sUdupi%20Cafe!5e0!3m2!1sen!2sin!4v1782097744911!5m2!1sen!2sin" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section id="cta-band" class="reveal">
+  <span class="eyebrow">Pure Vegetarian Dining</span>
+  <h2>Book Your Table Today</h2>
+  <div class="cta-btns">
+    <a href="tel:+917042311773" class="btn-primary">Call to Reserve</a>
+    <a href="https://www.google.com/maps/place/Udupi+Cafe/@28.6310407,77.2414423,17z" target="_blank" class="btn-outline">Get Directions</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Udupi Café</div>
+  <p class="footer-copy">© 2026 Udupi Café, ITO Delhi. Pure Vegetarian.</p>
+  <div class="footer-links">
+    <a href="tel:+917042311773">Call Us</a>
+    <a href="#menu">Menu</a>
+    <a href="#visit">Directions</a>
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+// ─── CURSOR ───────────────────────────────────────────────────────
+const cursor = document.getElementById('cursor');
+const follower = document.getElementById('cursorFollower');
+let mouseX = 0, mouseY = 0, fx = 0, fy = 0;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  gsap.to(cursor, { x: mouseX, y: mouseY, duration: 0.05 });
+});
+
+function animateFollower() {
+  fx += (mouseX - fx) * 0.1;
+  fy += (mouseY - fy) * 0.1;
+  gsap.set(follower, { x: fx, y: fy });
+  requestAnimationFrame(animateFollower);
+}
+animateFollower();
+
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    gsap.to(cursor, { width: 20, height: 20, duration: 0.3 });
+    gsap.to(follower, { width: 56, height: 56, duration: 0.3, borderColor: 'rgba(201,147,58,0.8)' });
+  });
+  el.addEventListener('mouseleave', () => {
+    gsap.to(cursor, { width: 12, height: 12, duration: 0.3 });
+    gsap.to(follower, { width: 36, height: 36, duration: 0.3, borderColor: 'rgba(201,147,58,0.5)' });
+  });
+});
+
+// ─── THREE.JS SPICE PARTICLE SYSTEM ───────────────────────────────
+(function initThree() {
+  const canvas = document.getElementById('canvas3d');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.z = 5;
+
+  // Spice particles — mustard seeds, curry leaves inspired shapes
+  const COUNT = 800;
+  const positions = new Float32Array(COUNT * 3);
+  const colors = new Float32Array(COUNT * 3);
+  const sizes = new Float32Array(COUNT);
+
+  const palette = [
+    [0.79, 0.58, 0.23],  // gold
+    [0.42, 0.12, 0.12],  // maroon
+    [0.95, 0.87, 0.68],  // cream
+    [0.18, 0.36, 0.11],  // leaf green
+    [0.85, 0.45, 0.15],  // turmeric orange
+  ];
+
+  for (let i = 0; i < COUNT; i++) {
+    // Sphere burst distribution — pomegranate-like
+    const r = 1.5 + Math.random() * 3;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    positions[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+    positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta) * 0.8;
+    positions[i * 3 + 2] = r * Math.cos(phi) * 0.6;
+
+    const c = palette[Math.floor(Math.random() * palette.length)];
+    colors[i * 3]     = c[0];
+    colors[i * 3 + 1] = c[1];
+    colors[i * 3 + 2] = c[2];
+
+    sizes[i] = Math.random() * 12 + 4;
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+  const mat = new THREE.ShaderMaterial({
+    vertexColors: true,
+    transparent: true,
+    depthWrite: false,
+    uniforms: {
+      uTime: { value: 0 },
+      uScale: { value: 1.0 },
+    },
+    vertexShader: `
+      attribute float size;
+      varying vec3 vColor;
+      uniform float uTime;
+      uniform float uScale;
+      void main() {
+        vColor = color;
+        vec3 pos = position;
+        float wave = sin(uTime * 0.8 + pos.x * 0.5 + pos.y * 0.3) * 0.12;
+        pos.y += wave;
+        pos.x += cos(uTime * 0.5 + pos.z * 0.4) * 0.06;
+        vec4 mvPos = modelViewMatrix * vec4(pos * uScale, 1.0);
+        gl_PointSize = size * (280.0 / -mvPos.z);
+        gl_Position = projectionMatrix * mvPos;
+      }
+    `,
+    fragmentShader: `
+      varying vec3 vColor;
+      void main() {
+        float d = length(gl_PointCoord - 0.5);
+        if (d > 0.5) discard;
+        float alpha = 1.0 - smoothstep(0.3, 0.5, d);
+        gl_FragColor = vec4(vColor, alpha * 0.85);
+      }
+    `
+  });
+
+  const particles = new THREE.Points(geo, mat);
+  scene.add(particles);
+
+  // Ambient ring — decorative circle
+  const ringGeo = new THREE.TorusGeometry(2.2, 0.008, 8, 120);
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0xC9933A, transparent: true, opacity: 0.2 });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  scene.add(ring);
+
+  const ring2 = new THREE.Mesh(
+    new THREE.TorusGeometry(2.8, 0.004, 8, 120),
+    new THREE.MeshBasicMaterial({ color: 0x6B1E1E, transparent: true, opacity: 0.3 })
+  );
+  scene.add(ring2);
+
+  let mouse3D = { x: 0, y: 0 };
+  document.addEventListener('mousemove', e => {
+    mouse3D.x = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouse3D.y = -(e.clientY / window.innerHeight - 0.5) * 2;
+  });
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.008;
+    mat.uniforms.uTime.value = t;
+    particles.rotation.y = t * 0.08 + mouse3D.x * 0.15;
+    particles.rotation.x = t * 0.03 + mouse3D.y * 0.08;
+    ring.rotation.z = t * 0.06;
+    ring.rotation.x = 0.4 + mouse3D.y * 0.1;
+    ring2.rotation.z = -t * 0.04;
+    ring2.rotation.y = t * 0.03;
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ─── LOADER ───────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  const loader = document.getElementById('loader');
+  const bar = document.getElementById('loaderBar');
+  const logoEl = loader.querySelector('.loader-logo');
+  const subEl = loader.querySelector('.loader-sub');
+
+  const tl = gsap.timeline({
+    onComplete: () => {
+      gsap.to(loader, { opacity: 0, duration: 0.6, onComplete: () => { loader.style.display = 'none'; initHeroAnimations(); }});
+    }
+  });
+
+  tl.to(logoEl, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' })
+    .to(bar, { width: '100%', duration: 1.2, ease: 'power1.inOut' }, '-=0.2')
+    .to(subEl, { opacity: 1, duration: 0.4 }, '-=0.4');
+});
+
+// ─── HERO ENTRANCE ────────────────────────────────────────────────
+function initHeroAnimations() {
+  const tl = gsap.timeline({ delay: 0.1 });
+  tl.to('.hero-eyebrow', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
+    .to('.hero-title', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' }, '-=0.4')
+    .to('.hero-subtitle', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5')
+    .to('.hero-scroll', { opacity: 1, duration: 0.6 }, '-=0.2');
+}
+
+// ─── SCROLL REVEALS ───────────────────────────────────────────────
+gsap.utils.toArray('.reveal').forEach(el => {
+  gsap.fromTo(el,
+    { opacity: 0, y: 60 },
+    {
+      opacity: 1, y: 0, duration: 1, ease: 'power3.out',
+      scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
+    }
+  );
+});
+
+// Staggered cuisine cards
+gsap.fromTo('.cuisine-card',
+  { opacity: 0, y: 40 },
+  {
+    opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out',
+    scrollTrigger: { trigger: '.cuisine-grid', start: 'top 80%' }
+  }
+);
+
+// Menu items stagger
+gsap.fromTo('.menu-item',
+  { opacity: 0, x: -20 },
+  {
+    opacity: 1, x: 0, duration: 0.4, stagger: 0.04, ease: 'power2.out',
+    scrollTrigger: { trigger: '#menu', start: 'top 70%' }
+  }
+);
+
+// Parallax hero title
+gsap.to('.hero-title', {
+  y: -80,
+  ease: 'none',
+  scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
+});
+
+// ─── MENU TABS ────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.menu-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const panel = document.getElementById('tab-' + btn.dataset.tab);
+    panel.classList.add('active');
+    gsap.fromTo(panel.querySelectorAll('.menu-item'),
+      { opacity: 0, x: -16 },
+      { opacity: 1, x: 0, duration: 0.3, stagger: 0.04, ease: 'power2.out' }
+    );
+  });
+});
+
+// ─── SMOOTH NAV SCROLL ────────────────────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      gsap.to(window, { scrollTo: target, duration: 1.2, ease: 'power3.inOut' });
+    }
+  });
+});
+
+</script>
+</body>
+</html>
